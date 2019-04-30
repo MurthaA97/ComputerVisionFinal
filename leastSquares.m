@@ -27,8 +27,8 @@ function theta = leastSquares(I, w)
     phie_x = cos(2 * theta);
     phie_y = sin(2 * theta);
     
-    phie_x = imfilter(phie_x, fspecial('gaussian', [5 5]));
-    phie_y = imfilter(phie_y, fspecial('gaussian', [5 5]));
+    phie_x = imfilter(phie_x, fspecial('gaussian', [3 3]));
+    phie_y = imfilter(phie_y, fspecial('gaussian', [3 3]));
     
     theta = rad2deg(0.5 * atan(phie_y ./ phie_x));
 

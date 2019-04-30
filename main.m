@@ -35,7 +35,7 @@ figure, imshow(G);
 % hold on
 % plot(cols, rows, 'r*', 'MarkerSize', 1);
 
-w = 4;
+w = 8;
 theta = leastSquares(G, w);
 
 len = 4;
