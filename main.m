@@ -1,30 +1,64 @@
 % clear
 % clc
-
-% display = 0;
-% n101_1 = 'FingerprintImages/101_1.tif';
-% n101_2 = 'FingerprintImages/101_2.tif';
-% n101_3 = 'FingerprintImages/101_3.tif';
-% n101_4 = 'FingerprintImages/101_4.tif';
-% n101_5 = 'FingerprintImages/101_5.tif';
-% n101_6 = 'FingerprintImages/101_6.tif';
-% n101_7 = 'FingerprintImages/101_7.tif';
-% n101_8 = 'FingerprintImages/101_8.tif';
-% n102_1 = 'FingerprintImages/102_1.tif';
-% n104_1 = 'FingerprintImages/104_1.tif';
 % 
-% T1.minutiae = getAllMinutiae(n101_1, display); 
-% T2.minutiae = getAllMinutiae(n101_2, display);
-% T3.minutiae = getAllMinutiae(n101_3, display);
-% T4.minutiae = getAllMinutiae(n101_4, display);
-% T5.minutiae = getAllMinutiae(n101_5, display);
+% display = 0;
+% files = dir('FingerprintImages/');
+% files(1:2, :) = [];
+% db = containers.Map;
+% 
+% for f = 1:size(files, 1)
+%     file = files(f);
+%     key = file.name(1:3);
+%     path = string(strcat(file.folder, '\', file.name));
+%     if isKey(db, key)
+%         db(key) = [db(key) path];
+%     else
+%         db(key) = path;
+%     end
+% end
+% 
+% minutiaeMap = getMinutiaeMap(db, display);
 
-templates = [T1 T2];
-[I] = getAllMinutiae(n101_5, display);
+num_templates = 2;
+keylist = char(keys(minutiaeMap));
+num_keys = size(keylist, 1);
+success_rate = containers.Map;
+for k = 1:num_keys
+    key = keylist(k, :);
+    group = minutiaeMap(key);
+    
+    matches = 0;
+    templates = group.minutiae(1:num_templates);
+    inputs = group.minutiae(num_templates+1:end);
+    num_inputs = size(inputs, 2);
+    for i = 1:num_inputs
+        S_g = matchMinutiae(templates, inputs(i).minutiae);
+        if S_g > 0.43, matches = matches + 1; end
+    end
+    
+    success_rate(key) = (matches / num_inputs) * 100;
+end
 
-S_g = matchMinutiae(templates, I);
+false_success_rate = containers.Map;
+for k = 1:num_keys
+    key = keylist(k, :);
+    group = minutiaeMap(key);
+    
+    matches = 0;
+    templates = group.minutiae(1:num_templates);
+    inputs = group.minutiae(num_templates+1:end);
+    num_inputs = size(inputs, 2);
+    for i = 1:num_inputs
+        S_g = matchMinutiae(templates, inputs(i).minutiae);
+        if S_g > 0.43, matches = matches + 1; end
+    end
+    
+    false_success_rate(key) = (matches / num_inputs) * 100;
+end
 
-if S_g > 0.43, fprintf('Match!\n'); else, fprintf('No Match found...\n'); end
+
+
+
 
 
 

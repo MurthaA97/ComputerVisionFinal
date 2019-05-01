@@ -50,7 +50,8 @@ function [orientim, reliability, coherence] = ...
     [rows,cols] = size(im);
     
     % Calculate image gradients.
-    [Gx, Gy] = derivative5(gaussfilt(im, gradientsigma), 'x', 'y');
+%     [Gx, Gy] = derivative5(gaussfilt(im, gradientsigma), 'x', 'y');
+    [Gx, Gy] = gradient(im);
     
     % Estimate the local ridge orientation at each point by finding the
     % principal axis of variation in the image gradients.
