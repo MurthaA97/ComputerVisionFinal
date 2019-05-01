@@ -2,14 +2,49 @@ clear
 clc
 
 display = 0;
-path_t = 'FingerprintImages/101_1.tif';
-path_i = 'FingerprintImages/101_2.tif';
+n101_1 = 'FingerprintImages/101_1.tif';
+n101_2 = 'FingerprintImages/101_2.tif';
+n101_3 = 'FingerprintImages/101_3.tif';
+n101_4 = 'FingerprintImages/101_4.tif';
+n101_5 = 'FingerprintImages/101_5.tif';
+n101_6 = 'FingerprintImages/101_6.tif';
+n101_7 = 'FingerprintImages/101_7.tif';
+n101_8 = 'FingerprintImages/101_8.tif';
+n102_1 = 'FingerprintImages/102_1.tif';
+n104_1 = 'FingerprintImages/104_1.tif';
 
-[T] = getAllMinutiae(path_t, display);
-[I] = getAllMinutiae(path_i, display);
+T1.minutiae = getAllMinutiae(n101_1, display); 
+T2.minutiae = getAllMinutiae(n101_2, display);
+% T3.minutiae = getAllMinutiae(n101_3, display);
+% T4.minutiae = getAllMinutiae(n101_4, display);
+% T5.minutiae = getAllMinutiae(n101_5, display);
+templates = [T1 T2];
 
-% when two fingerprints share 12 or more minutae, they are considered
-% to be from the same finger
+[I] = getAllMinutiae(n102_1, display);
 
-[t1_polar] = convertToPolar(T, 1, 0);
-[i1_polar] = convertToPolar(I, 1, 1);
+S = 0; S_g = 0;
+for t = 1:size(templates, 2)
+    T = templates(t).minutiae;
+    for i = 1:size(T, 1)
+        t_prime = transform(T, i);
+        for j = 1:size(I, 1)
+            i_prime = transform(I, j);
+            for alpha = -5:5
+                i_oriented = transform2(i_prime, alpha * pi / 180);
+                curr_score = score(t_prime, i_oriented);
+                if S < curr_score, S = curr_score; end
+            end
+        end
+    end
+    if S_g < S, S_g = S; end
+    S = 0;
+end
+
+if S_g > 0.43
+    fprintf('Match!\n');
+else
+    fprintf('No Match found...\n');
+end
+
+
+
