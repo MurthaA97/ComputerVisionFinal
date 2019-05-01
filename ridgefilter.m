@@ -123,5 +123,6 @@ function newim = ridgefilter(im, orient, freq, kx, ky, showfilter)
         s = sze(filterindex);   
         newim(r,c) = sum(sum(im(r-s:r+s, c-s:c+s).*filter{filterindex,orientindex(r,c)}));
     end
+end
 
     
