@@ -2,8 +2,8 @@ function theta = leastSquares(I, w)
     [r, c] = size(I);
 
     [dx, dy] = gradient(double(I));
-    [dx2, ~] = gradient(dx);
-    [~, dy2] = gradient(dy);
+    dx2 = dx.^2;
+    dy2 = dy.^2;
     
     numRows2 = r/w;
     numCols2 = c/w;
